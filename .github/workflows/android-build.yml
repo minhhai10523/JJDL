@@ -30,7 +30,7 @@ jobs:
 
       - name: Update buildozer.spec requirements
         run: |
-          # Thêm các thư viện cần thiết vào file buildozer.spec, ví dụ: kivy, requests, Pillow
+          # Sửa dòng requirements, thêm các thư viện cần thiết như kivy, requests, Pillow
           sed -i 's/requirements = python3/requirements = python3,kivy,requests,Pillow/g' buildozer.spec
 
       - name: Build APK
@@ -47,7 +47,7 @@ jobs:
           mv bin/*.apk apk_output/ || echo "No APK found!"
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.2
         with:
           name: JJDL-APK
           path: apk_output/*.apk
