@@ -24,24 +24,27 @@ jobs:
           sudo apt-get install -y python3-pip openjdk-17-jdk unzip
           pip install buildozer cython virtualenv
 
-      - name: Build APK
+      - name: Initialize Buildozer
         run: |
-          # Khởi tạo buildozer.spec (nếu cần)
-          # Nếu bạn đã có buildozer.spec rồi, có thể bỏ qua lệnh init
-          buildozer init
+          buildozer init || true
 
-          # Sửa buildozer.spec nếu cần (hoặc chỉnh bằng lệnh sed)
-          # buildozer.spec sẽ có sẵn "requirements = python3,kivy"
-          # => Thêm thư viện bạn dùng, ví dụ requests, pillow, v.v...
-          # Dưới đây chỉ là ví dụ, bạn có thể tự chỉnh
+      - name: Update buildozer.spec requirements
+        run: |
+          # Thêm các thư viện cần thiết vào file buildozer.spec, ví dụ: kivy, requests, Pillow
           sed -i 's/requirements = python3/requirements = python3,kivy,requests,Pillow/g' buildozer.spec
 
-          # Build APK
+      - name: Build APK
+        run: |
           buildozer -v android debug
 
-          # Tạo thư mục output & chuyển file apk vào
+      - name: List bin directory
+        run: |
+          ls -la bin/
+
+      - name: Prepare artifact
+        run: |
           mkdir -p apk_output
-          mv bin/*.apk apk_output/
+          mv bin/*.apk apk_output/ || echo "No APK found!"
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
